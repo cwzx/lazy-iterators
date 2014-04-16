@@ -223,11 +223,6 @@ protected:
 };
 
 template<typename Iterator>
-inline distinct_pairs_wrapper<Iterator> distinct_pairs( const std::pair<Iterator,Iterator>& range ) {
-	return distinct_pairs_wrapper<Iterator>(range);
-}
-
-template<typename Iterator>
 inline distinct_pairs_wrapper<Iterator> distinct_pairs( Iterator&& first, Iterator&& last ) {
 	return distinct_pairs_wrapper<Iterator>(
 		std::make_pair(
@@ -246,12 +241,11 @@ inline auto distinct_pairs( Container&& c ) {
 }
 
 template<typename Container>
-inline auto cdistinct_pairs( const Container& c ) {
+inline auto cdistinct_pairs( Container&& c ) {
 	return distinct_pairs(
-		cbegin(c),
-		cend(c)
+		cbegin( std::forward<Container>(c) ),
+		cend( std::forward<Container>(c) )
 	);
 }
-
 
 #endif
