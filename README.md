@@ -19,13 +19,13 @@ pairs(X) = product(X,X). There are N^2 pairs.
 
 ### Distinct Pairs
 
-distinct_pairs(X) is the set of all pairs (x,y) such that x and y are different instances and the order doesn't matter, so (x,y) is the same distinct pair as (y,x). These are known in combinatorics as '2-combinations', there are 'N choose 2' distinct pairs, which is N(N-1)/2.
+distinct_pairs(X) is the set of all pairs (x,y) such that x and y are different instances and the order doesn't matter, so (x,y) is the same distinct pair as (y,x). These are known in combinatorics as '2-combinations'. There are 'N choose 2' distinct pairs, which is N(N-1)/2.
 
 ### Zip
 
 zip(X,Y) is the set of element-wise pairings, e.g.
 
-zip( { 1, 2, 3 }, { 4, 5, 6 } ) = { (1,4), (2,5), (3,6) }
+zip( (1,2,3), (4,5,6) ) = { (1,4), (2,5), (3,6) }
 
 The number of pairs is min(M,N), i.e. if one of the lists is longer than the other, its extra elements will be ignored.
 
