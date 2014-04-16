@@ -18,9 +18,7 @@ struct distinct_pairs_iterator {
 	typedef std::pair<original_reference,original_reference>   reference;
 	typedef std::pair<original_pointer,original_pointer>       pointer;
 	typedef std::pair<Iterator,Iterator>                       pair_type;
-	
-	pair_type range, pair;
-
+		
 	distinct_pairs_iterator() = default;
 
 	explicit distinct_pairs_iterator( const pair_type& range ) : range(range) {
@@ -30,7 +28,7 @@ struct distinct_pairs_iterator {
 	}
 
 	distinct_pairs_iterator( const Iterator& first, const Iterator& last ) : distinct_pairs_iterator(pair_type(first,last)) {}
-	
+		
 	distinct_pairs_iterator( const pair_type& range, const pair_type& pair ) : range(range), pair(pair) {}
 
 	reference operator*() const {
@@ -106,7 +104,7 @@ struct distinct_pairs_iterator {
 		difference_type dsecond = std::distance( rhs.pair.second, pair.second );
 		difference_type N = std::distance( range.first, range.second );
 		difference_type sumfirst = std::distance( range.first, pair.first ) + std::distance( range.first, rhs.pair.first );
-		
+			
 		return ( ( 2*(N-2) - sumfirst ) * dfirst ) / 2 + dsecond;
 	}
 
@@ -148,6 +146,7 @@ struct distinct_pairs_iterator {
 	}
 
 protected:
+	pair_type range, pair;
 
 	difference_type index( difference_type N ) const {
 		return index(
@@ -188,9 +187,9 @@ struct distinct_pairs_wrapper {
 	typedef std::pair<Iterator,Iterator>                     pair_type;
 
 	explicit distinct_pairs_wrapper( const pair_type& range ) : range(range) {}
-	
+		
 	distinct_pairs_wrapper( const Iterator& first, const Iterator& last ) : range(pair_type(first,last)) {}
-	
+		
 	difference_type size() const {
 		difference_type N = std::distance( range.first, range.second );
 		return ( N * ( N - 1 ) ) / 2;

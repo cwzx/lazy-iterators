@@ -22,7 +22,7 @@ struct product_iterator {
 	typedef typename std::iterator_traits<It2>::difference_type   difference_type_2;
 	typedef typename std::iterator_traits<It2>::iterator_category iterator_category_2;
 	typedef std::pair<It2,It2>                                    pair_type_2;
-	
+		
 	typedef std::pair<value_type_1,value_type_2> value_type;
 	typedef std::pair<reference_1,reference_2>   reference;
 	typedef std::pair<pointer_1,pointer_2>       pointer;
@@ -32,9 +32,6 @@ struct product_iterator {
 	//typedef typename std::common_type<difference_type_1,difference_type_2>::type difference_type;  // fatal error C1001: An internal error has occurred in the compiler.
 	typedef difference_type_2   difference_type;
 	typedef iterator_category_2 iterator_category;
-
-	range_type range;
-	pair_type pair; 
 
 	product_iterator() = default;
 
@@ -156,6 +153,8 @@ struct product_iterator {
 	}
 
 protected:
+	range_type range;
+	pair_type pair; 
 
 	difference_type index( difference_type N2 ) const {
 		return index(
@@ -189,9 +188,9 @@ struct product_wrapper {
 	typedef std::pair<pair_type_1,pair_type_2>                  range_type;
 
 	explicit product_wrapper( const range_type& range ) : range(range) {}
-	
+		
 	product_wrapper( const pair_type_1& range_1, const pair_type_2& range_2 ) : range(range_type(range_1,range_2)) {}
-	
+		
 	difference_type size() const {
 		difference_type N1 = std::distance( range.first.first, range.first.second );
 		difference_type N2 = std::distance( range.second.first, range.second.second );
