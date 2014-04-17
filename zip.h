@@ -23,8 +23,8 @@ struct zip_iterator {
 		
 	typedef std::pair<value_type_1,value_type_2> value_type;
 	typedef std::pair<reference_1,reference_2>   reference;
-	typedef std::pair<pointer_1,pointer_2>       pointer;
 	typedef std::pair<It1,It2>                   pair_type;
+	typedef const pair_type*                     pointer;
 
 	typedef difference_type_1   difference_type;
 	typedef iterator_category_1 iterator_category;
@@ -37,6 +37,10 @@ struct zip_iterator {
 
 	reference operator*() const {
 		return reference( *pair.first, *pair.second );
+	}
+	
+	pointer operator->() const {
+		return &pair;
 	}
 
 	reference_1 first() const {

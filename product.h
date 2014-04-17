@@ -25,8 +25,8 @@ struct product_iterator {
 		
 	typedef std::pair<value_type_1,value_type_2> value_type;
 	typedef std::pair<reference_1,reference_2>   reference;
-	typedef std::pair<pointer_1,pointer_2>       pointer;
 	typedef std::pair<It1,It2>                   pair_type;
+	typedef const pair_type*                     pointer;
 	typedef std::pair<pair_type_1,pair_type_2>   range_type;
 
 	//typedef typename std::common_type<difference_type_1,difference_type_2>::type difference_type;  // fatal error C1001: An internal error has occurred in the compiler.
@@ -46,6 +46,10 @@ struct product_iterator {
 
 	reference operator*() const {
 		return reference( *pair.first, *pair.second );
+	}
+
+	pointer operator->() const {
+		return &pair;
 	}
 
 	reference_1 first() const {

@@ -16,9 +16,9 @@ struct distinct_pairs_iterator {
 
 	typedef std::pair<original_value_type,original_value_type> value_type;
 	typedef std::pair<original_reference,original_reference>   reference;
-	typedef std::pair<original_pointer,original_pointer>       pointer;
 	typedef std::pair<Iterator,Iterator>                       pair_type;
-		
+	typedef const pair_type*                                   pointer;
+
 	distinct_pairs_iterator() = default;
 
 	explicit distinct_pairs_iterator( const pair_type& range ) : range(range) {
@@ -33,6 +33,10 @@ struct distinct_pairs_iterator {
 
 	reference operator*() const {
 		return reference( *pair.first, *pair.second );
+	}
+	
+	pointer operator->() const {
+		return &pair;
 	}
 
 	original_reference first() const {
