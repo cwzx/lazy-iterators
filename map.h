@@ -155,7 +155,7 @@ protected:
 };
 
 template<typename F,typename Iterator>
-inline map_wrapper<F,Iterator> map( Iterator&& first, Iterator&& last, F&& f) {
+inline map_wrapper<F,Iterator> map( Iterator&& first, Iterator&& last, F&& f ) {
 	return map_wrapper<F,Iterator>( std::forward<F>(f),
 		std::make_pair(
 			std::forward<Iterator>(first),
