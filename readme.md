@@ -1,15 +1,11 @@
-iterators
-=========
+Lazy Iterators
+==============
 
-C++ iterators for iterating over pairs of elements from containers. Also lazy map, filter, and non-lazy reduce.
-
-### Introduction
+C++ iterators for iterating over various sets where the elements are computed on demand, without the need to precompute or store the set. Features sets of pairs (Cartesian product, distinct pairs, zip), subsets (filter), and function applications (map, reduce).
 
 A longer introduction can be read here:
 
 https://cwzx.wordpress.com/2014/04/15/iterating-over-distinct-pairs-in-cpp/
-
-The short version is that these iterators allow you to iterate over pairs of elements from a container (or a pair of containers) without having to generate or store a container of pairs.
 
 ### Product
 
