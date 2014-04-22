@@ -1,7 +1,7 @@
 Lazy Iterators
 ==============
 
-C++ iterators for iterating over various sets where the elements are computed on demand, without the need to precompute or store the set. Features sets of pairs (Cartesian product, distinct pairs, zip), subsets (filter), and function applications (map, reduce).
+C++ iterators for iterating over various sets where the elements are computed on demand, without the need to precompute or store the set. Features sets of pairs (Cartesian product, distinct pairs, zip), subsets (filter, slice), and function applications (map, reduce).
 
 A longer introduction can be read here:
 
@@ -31,6 +31,10 @@ filter(X,f) is the subset of elements satisfying the predicate f.
 
     filter( {1,2,3}, f ) = { 1, 3 }, where f(x) = ( x % 2 != 0 ).
 
+### Slice
+
+slice(X,skip,step,count) is a subset of X. The first skip elements are skipped, the following count elements are iterated through with a step size. Defaults: skip=0, step=1.
+
 ### Map
 
 map(X,f) is the set of element-wise evaluations of the function f.
@@ -46,10 +50,6 @@ reduce(X,f) is the single value obtained by repeated application of the binary f
 ### Integer Interval
 
 integer_interval(a,b) is a closed interval of integers, [a..b]. The integer type is templated, so you can use any data type that behaves like an integer.
-
-### Slice
-
-slice(X,skip,step,count) is a subset of X. The first skip elements are skipped, the following count elements are iterated through with a step size. Defaults: skip=0, step=1.
 
 
 Usage Notes
