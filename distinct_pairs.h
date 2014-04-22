@@ -109,7 +109,7 @@ struct distinct_pairs_iterator {
 		difference_type N = std::distance( range.first, range.second );
 		difference_type sumfirst = std::distance( range.first, pair.first ) + std::distance( range.first, rhs.pair.first );
 			
-		return ( ( 2*(N-2) - sumfirst ) * dfirst ) / 2 + dsecond;
+		return ( ( 2*(N-1) - 1 - sumfirst ) * dfirst ) / 2 + dsecond;
 	}
 
 	reference operator[]( difference_type offset ) const {
@@ -184,9 +184,9 @@ struct distinct_pairs_range {
 	typedef typename std::iterator_traits<Iterator>::value_type      value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
 	typedef Iterator original_iterator;
-	typedef distinct_pairs_iterator<original_iterator> iterator;
-	typedef std::reverse_iterator<iterator>            reverse_iterator;
-	typedef std::pair<Iterator,Iterator>               pair_type;
+	typedef distinct_pairs_iterator<original_iterator>     iterator;
+	typedef std::reverse_iterator<iterator>                reverse_iterator;
+	typedef std::pair<original_iterator,original_iterator> pair_type;
 
 	explicit distinct_pairs_range( const pair_type& range ) : range(range) {}
 		
@@ -204,7 +204,7 @@ struct distinct_pairs_range {
 	iterator end() const {
 		pair_type temp = range;
 		temp.first = range.second;
-		if( range.first != range.second)
+		if( range.first != range.second )
 			--temp.first;
 		return iterator( range, temp );
 	}

@@ -24,14 +24,19 @@ struct filter_iterator {
 
 	filter_iterator( const F& f, const range_type& r ) : f(f), range(r) {
 		if( range.first != range.second ) {
-			while( range.first != range.second && !f(*range.first) ) {
+			while( !f(*range.first) ) {
 				++range.first;
+				if( range.first == range.second ) break;
 			}
-			--range.second;
-			while(!f(*range.second)) {
+		}
+		if( range.first != range.second ) {
+			do {
 				--range.second;
-			}
-			++range.second;
+				if( f(*range.second) ) {
+					++range.second;
+					break;
+				}
+			} while( range.first != range.second );
 		}
 		it = range.first;
 	}
@@ -55,7 +60,8 @@ struct filter_iterator {
 	filter_iterator<F,Iterator>& operator++() {
 		do {
 			++it;
-		} while( it != range.second && !f(*it) );
+			if( it == range.second ) break;
+		} while( !f(*it) );
 		return *this;
 	}
 
@@ -79,7 +85,12 @@ struct filter_iterator {
 	}
 
 	filter_iterator<F,Iterator>& operator+=( difference_type offset ) {
-		it += offset;
+		for(;offset>0;--offset) {
+			++*this;
+		}
+		for(;offset<0;++offset) {
+			--*this;
+		}
 		return *this;
 	}
 
@@ -98,15 +109,24 @@ struct filter_iterator {
 	}
 
 	difference_type operator-( const filter_iterator<F,Iterator>& rhs ) const {
-		return std::distance( rhs.it, it );
+		difference_type N = std::distance( rhs.it, it );
+		difference_type r = 0;
+		Iterator temp = it;
+		for(difference_type i=0;i<N;++i) {
+			if( temp == range.second || f(*temp) )
+				++r;
+			++temp;
+		}
+		for(difference_type i=0;i>N;--i) {
+			if( f(*temp) )
+				++r;
+			--temp;
+		}
+		return r;
 	}
 
 	reference operator[]( difference_type offset ) const {
 		return *(*this + offset);
-	}
-
-	difference_type index() const {
-		return N = std::distance( range.first, it );
 	}
 
 	bool operator==( const filter_iterator<F,Iterator>& rhs ) const {
@@ -155,11 +175,7 @@ struct filter_range {
 	filter_range( const F& f, const range_type& range ) : f(f), range(range) {}
 		
 	filter_range( const F& f, const Iterator& first, const Iterator& last ) : map_range(f,range_type(first,last)) {}
-		
-	difference_type size() const {
-		return std::distance( range.first, range.second );
-	}
-
+	
 	iterator begin() const {
 		return iterator( f, range );
 	}
