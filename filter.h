@@ -7,7 +7,7 @@
 #include <utility>
 
 template<typename F,typename Iterator>
-struct filter_wrapper;
+struct filter_range;
 
 template<typename F,typename Iterator>
 struct filter_iterator {
@@ -23,14 +23,16 @@ struct filter_iterator {
 	filter_iterator() = default;
 
 	filter_iterator( const F& f, const range_type& r ) : f(f), range(r) {
-		while( range.first != range.second && !f(*range.first) ) {
-			++range.first;
-		}
-		--range.second;
-		while(!f(*range.second)) {
+		if( range.first != range.second ) {
+			while( range.first != range.second && !f(*range.first) ) {
+				++range.first;
+			}
 			--range.second;
+			while(!f(*range.second)) {
+				--range.second;
+			}
+			++range.second;
 		}
-		++range.second;
 		it = range.first;
 	}
 
@@ -96,7 +98,7 @@ struct filter_iterator {
 	}
 
 	difference_type operator-( const filter_iterator<F,Iterator>& rhs ) const {
-		return it - rhs.it;
+		return std::distance( rhs.it, it );
 	}
 
 	reference operator[]( difference_type offset ) const {
@@ -133,7 +135,7 @@ struct filter_iterator {
 		return !( *this < rhs );
 	}
 
-	friend filter_wrapper<F,Iterator>;
+	friend filter_range<F,Iterator>;
 
 protected:
 	range_type range;
@@ -142,36 +144,24 @@ protected:
 };
 
 template<typename F,typename Iterator>
-struct filter_wrapper {
+struct filter_range {
+	typedef typename std::iterator_traits<Iterator>::value_type      value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	typedef Iterator original_iterator;
 	typedef Iterator original_const_iterator;
-	typedef filter_iterator<F,original_iterator>       iterator;
 	typedef filter_iterator<F,original_const_iterator> const_iterator;
-	typedef std::reverse_iterator<iterator>            reverse_iterator;
 	typedef std::reverse_iterator<const_iterator>      const_reverse_iterator;
 	typedef std::pair<Iterator,Iterator>               range_type;
 
-	filter_wrapper( const F& f, const range_type& range ) : f(f), range(range) {}
+	filter_range( const F& f, const range_type& range ) : f(f), range(range) {}
 		
-	filter_wrapper( const F& f, const Iterator& first, const Iterator& last ) : map_wrapper(f,range_type(first,last)) {}
+	filter_range( const F& f, const Iterator& first, const Iterator& last ) : map_range(f,range_type(first,last)) {}
 		
 	difference_type size() const {
 		return std::distance( range.first, range.second );
 	}
 
-	iterator begin() {
-		return iterator( f, range );
-	}
-
-	iterator end() {
-		iterator r( f, range );
-		r.it = r.range.second;
-		return r;
-	}
-
 	const_iterator begin() const {
-		return const_iterator( range );
+		return const_iterator( f, range );
 	}
 
 	const_iterator end() const {
@@ -186,8 +176,8 @@ protected:
 };
 
 template<typename F,typename Iterator>
-inline filter_wrapper<F,Iterator> filter( Iterator&& first, Iterator&& last, F&& f ) {
-	return filter_wrapper<F,Iterator>( std::forward<F>(f),
+inline filter_range<F,Iterator> filter( Iterator&& first, Iterator&& last, F&& f ) {
+	return filter_range<F,Iterator>( std::forward<F>(f),
 		std::make_pair(
 			std::forward<Iterator>(first),
 			std::forward<Iterator>(last)
@@ -195,20 +185,20 @@ inline filter_wrapper<F,Iterator> filter( Iterator&& first, Iterator&& last, F&&
 	);
 }
 
-template<typename Container,typename F>
-inline auto filter( Container&& c, F&& f ) {
+template<typename Range,typename F>
+inline auto filter( Range&& r, F&& f ) {
 	return filter(
-		begin( std::forward<Container>(c) ),
-		end( std::forward<Container>(c) ),
+		begin( std::forward<Range>(r) ),
+		end( std::forward<Range>(r) ),
 		std::forward<F>(f)
 	);
 }
 
-template<typename Container,typename F>
-inline auto cfilter( Container&& c, F&& f ) {
+template<typename Range,typename F>
+inline auto cfilter( Range&& r, F&& f ) {
 	return filter(
-		cbegin( std::forward<Container>(c) ),
-		cend( std::forward<Container>(c) ),
+		cbegin( std::forward<Range>(r) ),
+		cend( std::forward<Range>(r) ),
 		std::forward<F>(f)
 	);
 }

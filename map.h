@@ -71,7 +71,7 @@ struct map_iterator {
 	}
 
 	difference_type operator-( const map_iterator<F,Iterator>& rhs ) const {
-		return it - rhs.it;
+		return std::distance( rhs.it, it );
 	}
 
 	value_type operator[]( difference_type offset ) const {
@@ -115,34 +115,36 @@ protected:
 };
 
 template<typename F,typename Iterator>
-struct map_wrapper {
+struct map_range {
+	typedef typename std::iterator_traits<Iterator>::value_type      original_value_type;
+	typedef typename std::result_of<F(original_value_type)>::type    value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	typedef Iterator original_iterator;
+	//typedef Iterator original_iterator;
 	typedef Iterator original_const_iterator;
-	typedef map_iterator<F,original_iterator>       iterator;
+	//typedef map_iterator<F,original_iterator>       iterator;
 	typedef map_iterator<F,original_const_iterator> const_iterator;
-	typedef std::reverse_iterator<iterator>         reverse_iterator;
+	//typedef std::reverse_iterator<iterator>         reverse_iterator;
 	typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
 	typedef std::pair<Iterator,Iterator>            range_type;
 
-	map_wrapper( const F& f, const range_type& range ) : f(f), range(range) {}
+	map_range( const F& f, const range_type& range ) : f(f), range(range) {}
 		
-	map_wrapper( const F& f, const Iterator& first, const Iterator& last ) : map_wrapper(f,range_type(first,last)) {}
+	map_range( const F& f, const Iterator& first, const Iterator& last ) : map_range(f,range_type(first,last)) {}
 		
 	difference_type size() const {
 		return std::distance( range.first, range.second );
 	}
 
-	iterator begin() {
+/*	iterator begin() {
 		return iterator( f, range );
 	}
 
 	iterator end() {
 		return iterator( f, range, range.second );
-	}
+	}*/
 
 	const_iterator begin() const {
-		return const_iterator( range );
+		return const_iterator( f, range );
 	}
 
 	const_iterator end() const {
@@ -155,8 +157,8 @@ protected:
 };
 
 template<typename F,typename Iterator>
-inline map_wrapper<F,Iterator> map( Iterator&& first, Iterator&& last, F&& f ) {
-	return map_wrapper<F,Iterator>( std::forward<F>(f),
+inline map_range<F,Iterator> map( Iterator&& first, Iterator&& last, F&& f ) {
+	return map_range<F,Iterator>( std::forward<F>(f),
 		std::make_pair(
 			std::forward<Iterator>(first),
 			std::forward<Iterator>(last)
@@ -164,20 +166,20 @@ inline map_wrapper<F,Iterator> map( Iterator&& first, Iterator&& last, F&& f ) {
 	);
 }
 
-template<typename Container,typename F>
-inline auto map( Container&& c, F&& f ) {
+template<typename Range,typename F>
+inline auto map( Range&& r, F&& f ) {
 	return map(
-		begin( std::forward<Container>(c) ),
-		end( std::forward<Container>(c) ),
+		begin( std::forward<Range>(r) ),
+		end( std::forward<Range>(r) ),
 		std::forward<F>(f)
 	);
 }
 
-template<typename Container,typename F>
-inline auto cmap( Container&& c, F&& f ) {
+template<typename Range,typename F>
+inline auto cmap( Range&& r, F&& f ) {
 	return map(
-		cbegin( std::forward<Container>(c) ),
-		cend( std::forward<Container>(c) ),
+		cbegin( std::forward<Range>(r) ),
+		cend( std::forward<Range>(r) ),
 		std::forward<F>(f)
 	);
 }

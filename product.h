@@ -78,8 +78,9 @@ struct product_iterator {
 	product_iterator<It1,It2>& operator--() {
 		if( pair.second == range.second.first ) {
 			pair.second = range.second.second;
-			--pair.second;
 			--pair.first;
+		} else {
+			--pair.second;
 		}
 		return *this;
 	}
@@ -114,7 +115,7 @@ struct product_iterator {
 		return temp -= offset;
 	}
 
-	difference_type operator-( const product_iterator<It1,It2>& rhs ) {
+	difference_type operator-( const product_iterator<It1,It2>& rhs ) const {
 		difference_type dfirst = std::distance( rhs.pair.first, pair.first );
 		difference_type dsecond = std::distance( rhs.pair.second, pair.second );
 		difference_type N2 = std::distance( range.second.first, range.second.second );
@@ -175,41 +176,29 @@ protected:
 };
 
 template<typename It1,typename It2>
-struct product_wrapper {
+struct product_range {
+	typedef typename std::iterator_traits<It1>::value_type      value_type_1;
+	typedef typename std::iterator_traits<It2>::value_type      value_type_2;
 	typedef typename std::iterator_traits<It1>::difference_type difference_type_1;
 	typedef typename std::iterator_traits<It2>::difference_type difference_type_2;
 	typedef typename std::common_type<difference_type_1,difference_type_2>::type difference_type;
-	typedef It1 iterator_1;
 	typedef It1 const_iterator_1;
-	typedef It2 iterator_2;
 	typedef It2 const_iterator_2;
-	typedef product_iterator<iterator_1,iterator_2>             iterator;
 	typedef product_iterator<const_iterator_1,const_iterator_2> const_iterator;
-	typedef std::reverse_iterator<iterator>                     reverse_iterator;
 	typedef std::reverse_iterator<const_iterator>               const_reverse_iterator;
 	typedef std::pair<It1,It1>                                  pair_type_1;
 	typedef std::pair<It2,It2>                                  pair_type_2;
 	typedef std::pair<pair_type_1,pair_type_2>                  range_type;
+	typedef std::pair<value_type_1,value_type_2>                value_type;
 
-	explicit product_wrapper( const range_type& range ) : range(range) {}
+	explicit product_range( const range_type& range ) : range(range) {}
 		
-	product_wrapper( const pair_type_1& range_1, const pair_type_2& range_2 ) : range(range_type(range_1,range_2)) {}
+	product_range( const pair_type_1& range_1, const pair_type_2& range_2 ) : range(range_type(range_1,range_2)) {}
 		
 	difference_type size() const {
 		difference_type N1 = std::distance( range.first.first, range.first.second );
 		difference_type N2 = std::distance( range.second.first, range.second.second );
 		return N1 * N2;
-	}
-
-	iterator begin() {
-		return iterator( range );
-	}
-
-	iterator end() {
-		return iterator(
-			range,
-			std::make_pair( range.first.second, range.second.first )
-		);
 	}
 
 	const_iterator begin() const {
@@ -228,8 +217,8 @@ protected:
 };
 
 template<typename It1,typename It2>
-inline product_wrapper<It1,It2> product( It1&& first_1, It1&& last_1, It2&& first_2, It2&& last_2 ) {
-	return product_wrapper<It1,It2>(
+inline product_range<It1,It2> product( It1&& first_1, It1&& last_1, It2&& first_2, It2&& last_2 ) {
+	return product_range<It1,It2>(
 		std::make_pair(
 			std::forward<It1>(first_1),
 			std::forward<It1>(last_1)
@@ -241,34 +230,34 @@ inline product_wrapper<It1,It2> product( It1&& first_1, It1&& last_1, It2&& firs
 	);
 }
 
-template<typename C1,typename C2>
-inline auto product( C1&& c1, C2&& c2 ) {
+template<typename R1,typename R2>
+inline auto product( R1&& r1, R2&& r2 ) {
 	return product(
-		begin( std::forward<C1>(c1) ),
-		end( std::forward<C1>(c1) ),
-		begin( std::forward<C2>(c2) ),
-		end( std::forward<C2>(c2) )
+		begin( std::forward<R1>(r1) ),
+		end( std::forward<R1>(r1) ),
+		begin( std::forward<R2>(r2) ),
+		end( std::forward<R2>(r2) )
 	);
 }
 
-template<typename C1,typename C2>
-inline auto cproduct( C1&& c1, C2&& c2 ) {
+template<typename R1,typename R2>
+inline auto cproduct( R1&& r1, R2&& r2 ) {
 	return product(
-		cbegin( std::forward<C1>(c1) ),
-		cend( std::forward<C1>(c1) ),
-		cbegin( std::forward<C2>(c2) ),
-		cend( std::forward<C2>(c2) )
+		cbegin( std::forward<R1>(r1) ),
+		cend( std::forward<R1>(r1) ),
+		cbegin( std::forward<R2>(r2) ),
+		cend( std::forward<R2>(r2) )
 	);
 }
 
-template<typename C>
-inline auto pairs( C&& c ) {
-	return product( std::forward<C>(c), std::forward<C>(c) );
+template<typename Range>
+inline auto pairs( Range&& r ) {
+	return product( std::forward<Range>(r), std::forward<Range>(r) );
 }
 
-template<typename C>
-inline auto cpairs( C&& c ) {
-	return cproduct( std::forward<C>(c), std::forward<C>(c) );
+template<typename Range>
+inline auto cpairs( Range&& r ) {
+	return cproduct( std::forward<Range>(r), std::forward<Range>(r) );
 }
 
 #endif

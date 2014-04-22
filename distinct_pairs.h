@@ -24,7 +24,8 @@ struct distinct_pairs_iterator {
 	explicit distinct_pairs_iterator( const pair_type& range ) : range(range) {
 		pair.first = range.first;
 		pair.second = range.first;
-		++pair.second;
+		if( range.first != range.second )
+			++pair.second;
 	}
 
 	distinct_pairs_iterator( const Iterator& first, const Iterator& last ) : distinct_pairs_iterator(pair_type(first,last)) {}
@@ -94,7 +95,7 @@ struct distinct_pairs_iterator {
 		return temp += offset;
 	}
 
-	distinct_pairs_iterator<Iterator>& operator-=( difference_type offset ) {
+	distinct_pairs_iterator<Iterator>& operator-=( difference_type offset ) const {
 		return *this += -offset;
 	}
 
@@ -174,40 +175,27 @@ protected:
 	}
 
 	difference_type index_j( difference_type k, difference_type i, difference_type N ) const {
-		return k + i + 1 - ( i * ( 2*N - ( i + 1 ) ) ) / 2;
+		return (k + i + 1) - ( i * ( 2*N - ( i + 1 ) ) ) / 2;
 	}
 
 };
 
 template<typename Iterator>
-struct distinct_pairs_wrapper {
+struct distinct_pairs_range {
+	typedef typename std::iterator_traits<Iterator>::value_type      value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	typedef Iterator original_iterator;
 	typedef Iterator original_const_iterator;
-	typedef distinct_pairs_iterator<original_iterator>       iterator;
 	typedef distinct_pairs_iterator<original_const_iterator> const_iterator;
-	typedef std::reverse_iterator<iterator>                  reverse_iterator;
 	typedef std::reverse_iterator<const_iterator>            const_reverse_iterator;
 	typedef std::pair<Iterator,Iterator>                     pair_type;
 
-	explicit distinct_pairs_wrapper( const pair_type& range ) : range(range) {}
+	explicit distinct_pairs_range( const pair_type& range ) : range(range) {}
 		
-	distinct_pairs_wrapper( const Iterator& first, const Iterator& last ) : range(pair_type(first,last)) {}
+	distinct_pairs_range( const Iterator& first, const Iterator& last ) : range(pair_type(first,last)) {}
 		
 	difference_type size() const {
 		difference_type N = std::distance( range.first, range.second );
 		return ( N * ( N - 1 ) ) / 2;
-	}
-
-	iterator begin() {
-		return iterator( range );
-	}
-
-	iterator end() {
-		pair_type temp = range;
-		temp.first = range.second;
-		--temp.first;
-		return iterator( range, temp );
 	}
 
 	const_iterator begin() const {
@@ -217,7 +205,8 @@ struct distinct_pairs_wrapper {
 	const_iterator end() const {
 		pair_type temp = range;
 		temp.first = range.second;
-		--temp.first;
+		if( range.first != range.second)
+			--temp.first;
 		return const_iterator( range, temp );
 	}
 
@@ -226,8 +215,8 @@ protected:
 };
 
 template<typename Iterator>
-inline distinct_pairs_wrapper<Iterator> distinct_pairs( Iterator&& first, Iterator&& last ) {
-	return distinct_pairs_wrapper<Iterator>(
+inline distinct_pairs_range<Iterator> distinct_pairs( Iterator&& first, Iterator&& last ) {
+	return distinct_pairs_range<Iterator>(
 		std::make_pair(
 			std::forward<Iterator>(first),
 			std::forward<Iterator>(last)
@@ -235,19 +224,19 @@ inline distinct_pairs_wrapper<Iterator> distinct_pairs( Iterator&& first, Iterat
 	);
 }
 
-template<typename Container>
-inline auto distinct_pairs( Container&& c ) {
+template<typename Range>
+inline auto distinct_pairs( Range&& r ) {
 	return distinct_pairs(
-		begin( std::forward<Container>(c) ),
-		end( std::forward<Container>(c) )
+		begin( std::forward<Range>(r) ),
+		end( std::forward<Range>(r) )
 	);
 }
 
-template<typename Container>
-inline auto cdistinct_pairs( Container&& c ) {
+template<typename Range>
+inline auto cdistinct_pairs( Range&& r ) {
 	return distinct_pairs(
-		cbegin( std::forward<Container>(c) ),
-		cend( std::forward<Container>(c) )
+		cbegin( std::forward<Range>(r) ),
+		cend( std::forward<Range>(r) )
 	);
 }
 
