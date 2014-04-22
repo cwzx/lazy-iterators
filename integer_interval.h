@@ -115,7 +115,7 @@ struct integer_interval_range {
 	integer_interval_range( T lower, T upper ) : range(lower,upper) {}
 	
 	difference_type size() const {
-		return 1 + range.second - range.first;
+		return difference_type(T(1) + range.second) - difference_type(range.first);
 	}
 
 	const_iterator begin() const {
@@ -123,7 +123,7 @@ struct integer_interval_range {
 	}
 
 	const_iterator end() const {
-		return const_iterator( range.second + 1 );
+		return const_iterator( range.second + T(1) );
 	}
 
 protected:
