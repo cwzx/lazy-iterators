@@ -47,6 +47,10 @@ reduce(X,f) is the single value obtained by repeated application of the binary f
 
 integer_interval(a,b) is a closed interval of integers, [a..b]. The integer type is templated, so you can use any data type that behaves like an integer.
 
+### Slice
+
+slice(X,skip,step,count) is a subset of X. The first skip elements are skipped, the following count elements are iterated through with a step size. Defaults: skip=0, step=1.
+
 
 Usage Notes
 -----------

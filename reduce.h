@@ -59,4 +59,5 @@ inline auto creduce( const Range& c, T x, F&& f ) {
 	}
 	return x;
 }
+
 #endif
