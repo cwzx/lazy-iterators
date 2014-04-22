@@ -147,10 +147,10 @@ template<typename F,typename Iterator>
 struct filter_range {
 	typedef typename std::iterator_traits<Iterator>::value_type      value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	typedef Iterator original_const_iterator;
-	typedef filter_iterator<F,original_const_iterator> const_iterator;
-	typedef std::reverse_iterator<const_iterator>      const_reverse_iterator;
-	typedef std::pair<Iterator,Iterator>               range_type;
+	typedef Iterator original_iterator;
+	typedef filter_iterator<F,original_iterator> iterator;
+	typedef std::reverse_iterator<iterator>      reverse_iterator;
+	typedef std::pair<Iterator,Iterator>         range_type;
 
 	filter_range( const F& f, const range_type& range ) : f(f), range(range) {}
 		
@@ -160,12 +160,12 @@ struct filter_range {
 		return std::distance( range.first, range.second );
 	}
 
-	const_iterator begin() const {
-		return const_iterator( f, range );
+	iterator begin() const {
+		return iterator( f, range );
 	}
 
-	const_iterator end() const {
-		const_iterator r( f, range );
+	iterator end() const {
+		iterator r( f, range );
 		r.it = r.range.second;
 		return r;
 	}
@@ -195,10 +195,10 @@ inline auto filter( Range&& r, F&& f ) {
 }
 
 template<typename Range,typename F>
-inline auto cfilter( Range&& r, F&& f ) {
+inline auto cfilter( const Range& r, F&& f ) {
 	return filter(
-		cbegin( std::forward<Range>(r) ),
-		cend( std::forward<Range>(r) ),
+		cbegin( r ),
+		cend( r ),
 		std::forward<F>(f)
 	);
 }

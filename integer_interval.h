@@ -104,11 +104,11 @@ protected:
 
 template<typename T>
 struct integer_interval_range {
-	typedef T                                     value_type;
-	typedef typename std::make_signed_t<T>        difference_type;
-	typedef integer_iterator<T>                   const_iterator;
-	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-	typedef std::pair<T,T>                        range_type;
+	typedef T                               value_type;
+	typedef typename std::make_signed_t<T>  difference_type;
+	typedef integer_iterator<T>             iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+	typedef std::pair<T,T>                  range_type;
 
 	explicit integer_interval_range( range_type range ) : range(range) {}
 
@@ -118,12 +118,12 @@ struct integer_interval_range {
 		return difference_type(T(1) + range.second) - difference_type(range.first);
 	}
 
-	const_iterator begin() const {
-		return const_iterator( range.first );
+	iterator begin() const {
+		return iterator( range.first );
 	}
 
-	const_iterator end() const {
-		return const_iterator( range.second + T(1) );
+	iterator end() const {
+		return iterator( range.second + T(1) );
 	}
 
 protected:

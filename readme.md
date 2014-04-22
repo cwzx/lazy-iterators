@@ -59,11 +59,7 @@ Examples
 ### Count the number of distinct pairs whose sum is even
 
 ```cpp
-// a big vector
-vector<int> v( 1 << 17 );
- 
-// fill the vector with ascending numbers starting with 1
-iota( begin(v), end(v), 1 );
+auto v = integer_interval( 1, 1 << 14 );
  
 // count the number of distinct pairs whose sum is even
 auto ps = distinct_pairs(v);
@@ -81,8 +77,8 @@ cout << count_if( begin(ps), end(ps),
 ### Print all distinct pairs of distinct pairs
 
 ```cpp
-vector<int> v { 1, 2, 3, 4 };
- 
+auto v = integer_interval( 1, 4 );
+
 for( auto p : distinct_pairs(distinct_pairs(v)) ) {
     cout << "( ( " << p.first.first << ", " << p.first.second << " ), ( " << p.second.first << ", " << p.second.second << " ) )" << endl;
 }

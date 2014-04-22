@@ -10,7 +10,6 @@ template<typename Iterator>
 struct distinct_pairs_iterator {
 	typedef typename std::iterator_traits<Iterator>::value_type        original_value_type;
 	typedef typename std::iterator_traits<Iterator>::reference         original_reference;
-	typedef typename std::iterator_traits<Iterator>::pointer           original_pointer;
 	typedef typename std::iterator_traits<Iterator>::difference_type   difference_type;
 	typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
 
@@ -184,10 +183,10 @@ template<typename Iterator>
 struct distinct_pairs_range {
 	typedef typename std::iterator_traits<Iterator>::value_type      value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	typedef Iterator original_const_iterator;
-	typedef distinct_pairs_iterator<original_const_iterator> const_iterator;
-	typedef std::reverse_iterator<const_iterator>            const_reverse_iterator;
-	typedef std::pair<Iterator,Iterator>                     pair_type;
+	typedef Iterator original_iterator;
+	typedef distinct_pairs_iterator<original_iterator> iterator;
+	typedef std::reverse_iterator<iterator>            reverse_iterator;
+	typedef std::pair<Iterator,Iterator>               pair_type;
 
 	explicit distinct_pairs_range( const pair_type& range ) : range(range) {}
 		
@@ -198,16 +197,16 @@ struct distinct_pairs_range {
 		return ( N * ( N - 1 ) ) / 2;
 	}
 
-	const_iterator begin() const {
-		return const_iterator( range );
+	iterator begin() const {
+		return iterator( range );
 	}
 
-	const_iterator end() const {
+	iterator end() const {
 		pair_type temp = range;
 		temp.first = range.second;
 		if( range.first != range.second)
 			--temp.first;
-		return const_iterator( range, temp );
+		return iterator( range, temp );
 	}
 
 protected:
@@ -233,10 +232,10 @@ inline auto distinct_pairs( Range&& r ) {
 }
 
 template<typename Range>
-inline auto cdistinct_pairs( Range&& r ) {
+inline auto cdistinct_pairs( const Range& r ) {
 	return distinct_pairs(
-		cbegin( std::forward<Range>(r) ),
-		cend( std::forward<Range>(r) )
+		cbegin( r ),
+		cend( r )
 	);
 }
 

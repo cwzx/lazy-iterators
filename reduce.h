@@ -21,7 +21,7 @@ inline auto reduce( Range&& c, F&& f ) {
 }
 
 template<typename Range,typename F>
-inline auto creduce( Range&& c, F&& f ) {
+inline auto creduce( const Range& c, F&& f ) {
 	auto it = cbegin(c);
 	auto e = cend(c);
 	std::decay_t<decltype(*it)> x{};
@@ -48,7 +48,7 @@ inline auto reduce( Range&& c, T x, F&& f ) {
 }
 
 template<typename Range,typename T,typename F>
-inline auto creduce( Range&& c, T x, F&& f ) {
+inline auto creduce( const Range& c, T x, F&& f ) {
 	auto it = cbegin(c);
 	auto e = cend(c);
 	if( it != e ) {

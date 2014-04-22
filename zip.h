@@ -11,13 +11,11 @@ template<typename It1,typename It2>
 struct zip_iterator {
 	typedef typename std::iterator_traits<It1>::value_type        value_type_1;
 	typedef typename std::iterator_traits<It1>::reference         reference_1;
-	typedef typename std::iterator_traits<It1>::pointer           pointer_1;
 	typedef typename std::iterator_traits<It1>::difference_type   difference_type_1;
 	typedef typename std::iterator_traits<It1>::iterator_category iterator_category_1;
 
 	typedef typename std::iterator_traits<It2>::value_type        value_type_2;
 	typedef typename std::iterator_traits<It2>::reference         reference_2;
-	typedef typename std::iterator_traits<It2>::pointer           pointer_2;
 	typedef typename std::iterator_traits<It2>::difference_type   difference_type_2;
 	typedef typename std::iterator_traits<It2>::iterator_category iterator_category_2;
 		
@@ -140,14 +138,14 @@ struct zip_range {
 	typedef typename std::iterator_traits<It1>::difference_type difference_type_1;
 	typedef typename std::iterator_traits<It2>::difference_type difference_type_2;
 	typedef typename std::common_type<difference_type_1,difference_type_2>::type difference_type;
-	typedef It1 const_iterator_1;
-	typedef It2 const_iterator_2;
-	typedef zip_iterator<const_iterator_1,const_iterator_2> const_iterator;
-	typedef std::reverse_iterator<const_iterator>           const_reverse_iterator;
-	typedef std::pair<It1,It1>                              pair_type_1;
-	typedef std::pair<It2,It2>                              pair_type_2;
-	typedef std::pair<pair_type_1,pair_type_2>              range_type;
-	typedef std::pair<value_type_1,value_type_2>            value_type;
+	typedef It1 iterator_1;
+	typedef It2 iterator_2;
+	typedef zip_iterator<iterator_1,iterator_2>  iterator;
+	typedef std::reverse_iterator<iterator>      reverse_iterator;
+	typedef std::pair<It1,It1>                   pair_type_1;
+	typedef std::pair<It2,It2>                   pair_type_2;
+	typedef std::pair<pair_type_1,pair_type_2>   range_type;
+	typedef std::pair<value_type_1,value_type_2> value_type;
 
 	explicit zip_range( const range_type& range ) : range(range) {}
 		
@@ -159,13 +157,13 @@ struct zip_range {
 		return std::min( N1, N2 );
 	}
 
-	const_iterator begin() const {
-		return const_iterator( range.first.first, range.second.first );
+	iterator begin() const {
+		return iterator( range.first.first, range.second.first );
 	}
 
-	const_iterator end() const {
+	iterator end() const {
 		difference_type N = size();
-		return const_iterator( range.first.first + N, range.second.first + N );
+		return iterator( range.first.first + N, range.second.first + N );
 	}
 
 protected:
@@ -197,12 +195,12 @@ inline auto zip( R1&& r1, R2&& r2 ) {
 }
 
 template<typename R1,typename R2>
-inline auto czip( R1&& r1, R2&& r2 ) {
+inline auto czip( const R1& r1, const R2& r2 ) {
 	return zip(
-		cbegin( std::forward<R1>(r1) ),
-		cend( std::forward<R1>(r1) ),
-		cbegin( std::forward<R2>(r2) ),
-		cend( std::forward<R2>(r2) )
+		cbegin( r1 ),
+		cend( r1 ),
+		cbegin( r2 ),
+		cend( r2 )
 	);
 }
 

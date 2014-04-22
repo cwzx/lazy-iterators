@@ -14,6 +14,8 @@ struct map_iterator {
 	typedef typename std::iterator_traits<Iterator>::iterator_category iterator_category;
 	typedef typename std::result_of<F(original_value_type)>::type      value_type;
 	typedef std::pair<Iterator,Iterator> range_type;
+	typedef const value_type* pointer;
+	typedef value_type reference;
 
 	map_iterator() = default;
 
@@ -119,13 +121,10 @@ struct map_range {
 	typedef typename std::iterator_traits<Iterator>::value_type      original_value_type;
 	typedef typename std::result_of<F(original_value_type)>::type    value_type;
 	typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
-	//typedef Iterator original_iterator;
-	typedef Iterator original_const_iterator;
-	//typedef map_iterator<F,original_iterator>       iterator;
-	typedef map_iterator<F,original_const_iterator> const_iterator;
-	//typedef std::reverse_iterator<iterator>         reverse_iterator;
-	typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
-	typedef std::pair<Iterator,Iterator>            range_type;
+	typedef Iterator original_iterator;
+	typedef map_iterator<F,original_iterator> iterator;
+	typedef std::reverse_iterator<iterator>   reverse_iterator;
+	typedef std::pair<Iterator,Iterator>      range_type;
 
 	map_range( const F& f, const range_type& range ) : f(f), range(range) {}
 		
@@ -135,20 +134,12 @@ struct map_range {
 		return std::distance( range.first, range.second );
 	}
 
-/*	iterator begin() {
+	iterator begin() const {
 		return iterator( f, range );
 	}
 
-	iterator end() {
+	iterator end() const {
 		return iterator( f, range, range.second );
-	}*/
-
-	const_iterator begin() const {
-		return const_iterator( f, range );
-	}
-
-	const_iterator end() const {
-		return const_iterator( f, range, range.second );
 	}
 
 protected:
@@ -176,10 +167,10 @@ inline auto map( Range&& r, F&& f ) {
 }
 
 template<typename Range,typename F>
-inline auto cmap( Range&& r, F&& f ) {
+inline auto cmap( const Range& r, F&& f ) {
 	return map(
-		cbegin( std::forward<Range>(r) ),
-		cend( std::forward<Range>(r) ),
+		cbegin( r ),
+		cend( r ),
 		std::forward<F>(f)
 	);
 }
