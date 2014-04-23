@@ -33,7 +33,7 @@ filter(X,f) is the subset of elements satisfying the predicate f.
 
 ### Slice
 
-slice(X,skip,step,count) is a subset of X. The first skip elements are skipped, the following count elements are iterated through with a step size. Defaults: skip=0, step=1.
+slice(X,skip,count,step) is a subset of X. The first skip elements are skipped, the following count elements are iterated through with a step size. Defaults: skip=0, step=1.
 
 ### Map
 

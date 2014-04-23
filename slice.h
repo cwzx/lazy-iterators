@@ -122,14 +122,14 @@ struct slice_range {
 	typedef std::reverse_iterator<iterator>   reverse_iterator;
 	typedef std::pair<Iterator,Iterator>      range_type;
 
-	slice_range( const range_type& range, difference_type skip, difference_type step, difference_type count ) : range(range), skip(skip), step(step), count(count) {
+	slice_range( const range_type& range, difference_type skip, difference_type count, difference_type step ) : range(range), skip(skip), count(count), step(step) {
 		difference_type N = std::distance( range.first, range.second );
 		count = std::min( N - skip, count );
 	}
 	
-	slice_range( const range_type& range, difference_type skip, difference_type count ) : slice_range(range,skip,1,count) {}
+	slice_range( const range_type& range, difference_type skip, difference_type count ) : slice_range(range,skip,count,1) {}
 	
-	slice_range( const range_type& range, difference_type count ) : slice_range(range,0,1,count) {}
+	slice_range( const range_type& range, difference_type count ) : slice_range(range,0,count,1) {}
 
 	iterator begin() const {
 		return iterator( range.first + skip, step );
@@ -141,31 +141,31 @@ struct slice_range {
 
 protected:
 	range_type range;
-	difference_type skip, step, count;
+	difference_type skip, count, step;
 };
 
 template<typename Iterator>
-inline slice_range<Iterator> slice( Iterator&& first, Iterator&& last, uint32_t skip, uint32_t step, uint32_t count ) {
+inline slice_range<Iterator> slice( Iterator&& first, Iterator&& last, uint32_t skip, uint32_t count, uint32_t step ) {
 	return slice_range<Iterator>(
 		std::make_pair(
 			std::forward<Iterator>(first),
 			std::forward<Iterator>(last)
-		), skip, step, count
+		), skip, count, step
 	);
 }
 
 template<typename Range>
-inline auto slice( Range&& r, uint32_t skip, uint32_t step, uint32_t count ) {
+inline auto slice( Range&& r, uint32_t skip, uint32_t count, uint32_t step ) {
 	return slice(
 		begin( std::forward<Range>(r) ),
 		end( std::forward<Range>(r) ),
-		skip, step, count
+		skip, count, step
 	);
 }
 
 template<typename Range>
-inline auto cslice( const Range& r, uint32_t skip, uint32_t step, uint32_t count ) {
-	return slice( cbegin(r), cend(r), skip, step, count );
+inline auto cslice( const Range& r, uint32_t skip, uint32_t count, uint32_t step ) {
+	return slice( cbegin(r), cend(r), skip, count, step );
 }
 
 template<typename Range>
@@ -173,13 +173,13 @@ inline auto slice( Range&& r, uint32_t skip, uint32_t count ) {
 	return slice(
 		begin( std::forward<Range>(r) ),
 		end( std::forward<Range>(r) ),
-		skip, 1, count
+		skip, count, 1
 	);
 }
 
 template<typename Range>
 inline auto cslice( const Range& r, uint32_t skip, uint32_t count ) {
-	return slice( cbegin(r), cend(r), skip, 1, count );
+	return slice( cbegin(r), cend(r), skip, count, 1 );
 }
 
 template<typename Range>
@@ -187,13 +187,13 @@ inline auto slice( Range&& r, uint32_t count ) {
 	return slice(
 		begin( std::forward<Range>(r) ),
 		end( std::forward<Range>(r) ),
-		0, 1, count
+		0, count, 1
 	);
 }
 
 template<typename Range>
 inline auto cslice( const Range& r, uint32_t count ) {
-	return slice( cbegin(r), cend(r), 0, 1, count );
+	return slice( cbegin(r), cend(r), 0, count, 1 );
 }
 
 #endif
