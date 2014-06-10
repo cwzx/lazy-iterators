@@ -102,9 +102,7 @@ struct zip_iterator {
 	}
 
 	bool operator==( const zip_iterator<It1,It2>& rhs ) const {
-		if( pair == rhs.pair )
-			return true;
-		return false;
+		return pair == rhs.pair;
 	}
 
 	bool operator!=( const zip_iterator<It1,It2>& rhs ) const {

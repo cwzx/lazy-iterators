@@ -73,9 +73,7 @@ struct integer_iterator {
 	}
 
 	bool operator==( const integer_iterator<T>& rhs ) const {
-		if( value == rhs.value )
-			return true;
-		return false;
+		return value == rhs.value;
 	}
 
 	bool operator!=( const integer_iterator<T>& rhs ) const {

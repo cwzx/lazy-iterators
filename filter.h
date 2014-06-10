@@ -130,9 +130,7 @@ struct filter_iterator {
 	}
 
 	bool operator==( const filter_iterator<F,Iterator>& rhs ) const {
-		if( it == rhs.it )
-			return true;
-		return false;
+		return it == rhs.it;
 	}
 
 	bool operator!=( const filter_iterator<F,Iterator>& rhs ) const {

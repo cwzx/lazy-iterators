@@ -51,6 +51,14 @@ reduce(X,f) is the single value obtained by repeated application of the binary f
 
 integer_interval(a,b) is a closed interval of integers, [a..b]. The integer type is templated, so you can use any data type that behaves like an integer.
 
+### Function Sequence
+
+function_sequence(initial,f) is a sequence produced by repeated application of a function f to an initial state. Each application mutates the state and returns a value. The sequence can only be iterated forward.
+
+### Invertible Function Sequence
+
+invertible_function_sequence(initial,f,finv) is a sequence produced by repeated application of an invertible function f with inverse finv to an initial state. Each application mutates the state and returns a value. The sequence supports bidirectional iteration.
+
 
 Usage Notes
 -----------
@@ -59,6 +67,42 @@ The pairs iterators' dereference operations return a pair of references, not a r
 
 Examples
 --------
+
+### Fibonacci
+
+```cpp
+auto fibonacci = function_sequence( make_pair(1,0),
+	[]( auto& p ) {
+		auto temp = p.first + p.second;
+		p.first = p.second;
+		return p.second = temp;
+	}
+);
+
+for( auto f : fibonacci ) {
+	if( f > 1000 ) break;
+	cout << f << endl;
+}
+ 
+/* Output:
+1
+1
+2
+3
+5
+8
+13
+21
+34
+55
+89
+144
+233
+377
+610
+987
+*/
+```
 
 ### Count the number of distinct pairs whose sum is even
 

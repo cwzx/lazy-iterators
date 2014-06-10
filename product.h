@@ -130,9 +130,7 @@ struct product_iterator {
 	}
 
 	bool operator==( const product_iterator<It1,It2>& rhs ) const {
-		if( pair == rhs.pair )
-			return true;
-		return false;
+		return pair == rhs.pair;
 	}
 
 	bool operator!=( const product_iterator<It1,It2>& rhs ) const {

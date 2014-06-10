@@ -85,9 +85,7 @@ struct map_iterator {
 	}
 
 	bool operator==( const map_iterator<F,Iterator>& rhs ) const {
-		if( it == rhs.it )
-			return true;
-		return false;
+		return it == rhs.it;
 	}
 
 	bool operator!=( const map_iterator<F,Iterator>& rhs ) const {

@@ -83,9 +83,7 @@ struct step_iterator {
 	}
 
 	bool operator==( const step_iterator<Iterator>& rhs ) const {
-		if( it == rhs.it )
-			return true;
-		return false;
+		return it == rhs.it;
 	}
 
 	bool operator!=( const step_iterator<Iterator>& rhs ) const {
