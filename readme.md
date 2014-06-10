@@ -1,7 +1,7 @@
 Lazy Iterators
 ==============
 
-C++ iterators for iterating over various sets where the elements are computed on demand, without the need to precompute or store the set. Features sets of pairs (Cartesian product, distinct pairs, zip), subsets (filter, slice), and function applications (map, reduce).
+C++ iterators for iterating over various sets where the elements are computed on demand, without the need to precompute or store the set. Features sets of pairs (Cartesian product, distinct pairs, zip), subsets (filter, slice), and function applications (map, reduce, function_sequence).
 
 A longer introduction can be read here:
 
