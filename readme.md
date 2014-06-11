@@ -108,7 +108,8 @@ for( auto f : fibonacci ) {
 
 ```cpp
 auto primes( int lower, int upper ) {
-	return filter( integer_interval( max(lower,2), max(max(upper,2),lower) ),
+	upper = max(upper,2); lower = min(max(lower,2),upper); 
+	return filter( integer_interval( lower, upper ),
 		[]( auto i ) {
 			auto tests = integer_interval( 2, max((int)sqrt(i),2) );
 			auto results = map( tests, [i]( auto j ) { return (i % j) != 0; } );
