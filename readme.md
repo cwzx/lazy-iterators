@@ -104,53 +104,38 @@ for( auto f : fibonacci ) {
 */
 ```
 
-### Count the number of distinct pairs whose sum is even
+### Primes
 
 ```cpp
-auto v = integer_interval( 1, 1 << 14 );
- 
-// count the number of distinct pairs whose sum is even
-auto ps = distinct_pairs(v);
-cout << count_if( begin(ps), end(ps),
-    []( auto p ) {
-        return ( p.first + p.second ) % 2 == 0;
-    }
-);
- 
-/* Output:
-4294901760
-*/
-```
-
-### Print all distinct pairs of distinct pairs
-
-```cpp
-auto v = integer_interval( 1, 4 );
-
-for( auto p : distinct_pairs(distinct_pairs(v)) ) {
-    cout << "( ( " << p.first.first << ", " << p.first.second << " ), ( " << p.second.first << ", " << p.second.second << " ) )" << endl;
+auto primes( int lower, int upper ) {
+	return filter( integer_interval( max(lower,2), max(max(upper,2),lower) ),
+		[]( auto i ) {
+			auto tests = integer_interval( 2, max((int)sqrt(i),2) );
+			auto results = map( tests, [i]( auto j ) { return (i % j) != 0; } );
+			return reduce( results, []( bool x, bool y ) { return x && y; } );
+		}
+	);
 }
- 
+
+for( auto p : primes(100,150) ) {
+	cout << p << endl;
+}
+
 /* Output:
-( ( 1, 2 ), ( 1, 3 ) )
-( ( 1, 2 ), ( 1, 4 ) )
-( ( 1, 2 ), ( 2, 3 ) )
-( ( 1, 2 ), ( 2, 4 ) )
-( ( 1, 2 ), ( 3, 4 ) )
-( ( 1, 3 ), ( 1, 4 ) )
-( ( 1, 3 ), ( 2, 3 ) )
-( ( 1, 3 ), ( 2, 4 ) )
-( ( 1, 3 ), ( 3, 4 ) )
-( ( 1, 4 ), ( 2, 3 ) )
-( ( 1, 4 ), ( 2, 4 ) )
-( ( 1, 4 ), ( 3, 4 ) )
-( ( 2, 3 ), ( 2, 4 ) )
-( ( 2, 3 ), ( 3, 4 ) )
-( ( 2, 4 ), ( 3, 4 ) )
+101
+103
+107
+109
+113
+127
+131
+137
+139
+149
 */
 ```
 
-### Generate Pythagorean triples
+### Pythagorean Triples
 
 ```cpp
 auto range = integer_interval( 1, 100 );
@@ -223,7 +208,31 @@ for( auto t : pythagorean_triples ) {
 */
 ```
 
+### Distinct pairs of distinct pairs
 
+```cpp
+auto v = integer_interval( 1, 4 );
 
-
+for( auto p : distinct_pairs(distinct_pairs(v)) ) {
+    cout << "( ( " << p.first.first << ", " << p.first.second << " ), ( " << p.second.first << ", " << p.second.second << " ) )" << endl;
+}
+ 
+/* Output:
+( ( 1, 2 ), ( 1, 3 ) )
+( ( 1, 2 ), ( 1, 4 ) )
+( ( 1, 2 ), ( 2, 3 ) )
+( ( 1, 2 ), ( 2, 4 ) )
+( ( 1, 2 ), ( 3, 4 ) )
+( ( 1, 3 ), ( 1, 4 ) )
+( ( 1, 3 ), ( 2, 3 ) )
+( ( 1, 3 ), ( 2, 4 ) )
+( ( 1, 3 ), ( 3, 4 ) )
+( ( 1, 4 ), ( 2, 3 ) )
+( ( 1, 4 ), ( 2, 4 ) )
+( ( 1, 4 ), ( 3, 4 ) )
+( ( 2, 3 ), ( 2, 4 ) )
+( ( 2, 3 ), ( 3, 4 ) )
+( ( 2, 4 ), ( 3, 4 ) )
+*/
+```
 
