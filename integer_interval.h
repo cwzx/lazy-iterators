@@ -124,6 +124,14 @@ struct integer_interval_range {
 		return iterator( range.second + T(1) );
 	}
 
+	value_type lower() const {
+		return range.first;
+	}
+
+	value_type upper() const {
+		return range.second;
+	}
+
 protected:
 	range_type range;
 };
